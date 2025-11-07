@@ -18,6 +18,7 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden">
       <HeroScroll />
+       
       <AboutSection />
       <WhyChooseUsSection />
       <FeaturedProduct />
