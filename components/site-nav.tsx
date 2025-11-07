@@ -476,7 +476,7 @@ function RightDrawer({ open, onClose }: { open: boolean; onClose: () => void }) 
               transition={{ delay: 0.8 }}
             >
               <Link
-                href="/contact"
+                href="/booking"
                 onClick={onClose}
                 className="block w-full py-4 px-6 bg-gradient-to-r from-amber-200 to-amber-300 
                          text-purple-900 text-center font-bold rounded-full shadow-lg 

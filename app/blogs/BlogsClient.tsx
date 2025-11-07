@@ -16,7 +16,7 @@ const supabase = createClient(
 
 const publicImageUrl = (path?: string | null) =>
   path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-images/${path}`
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-image/${path}`
     : undefined;
 
 /* --------------------------------- Types -------------------------------- */

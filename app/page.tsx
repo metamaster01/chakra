@@ -8,6 +8,7 @@ import { FooterSection } from "@/components/footer-section"
 import { AboutSection } from "@/components/about-section"
 import { WhyChooseUsSection } from "@/components/why-choose-us"
 import FeaturedProduct from "@/components/ProductList"
+import FeaturedServices from "@/components/ServiceList"
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <AboutSection />
       <WhyChooseUsSection />
       <FeaturedProduct />
+      <FeaturedServices />
       <TestimonialSection />
       <CallToActionSection />
       <FooterSection />
