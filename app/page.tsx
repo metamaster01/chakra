@@ -8,13 +8,11 @@ import { FooterSection } from "@/components/footer-section"
 import { AboutSection } from "@/components/about-section"
 import { WhyChooseUsSection } from "@/components/why-choose-us"
 import FeaturedProduct from "@/components/ProductList"
+import FeaturedServices from "@/components/ServiceList"
 import { GallerySection } from "@/components/GallerySection"
 import { VideoSection } from "@/components/VideoSection"
 // ✅ Server Component
 // import HeroScrollClient from '@/components/HeroScrollClient'
-
-
-
 
 export default function Home() {
   return (
@@ -23,6 +21,7 @@ export default function Home() {
       <AboutSection />
       <WhyChooseUsSection />
       <FeaturedProduct />
+      <FeaturedServices />
       <GallerySection />
       <VideoSection />
       <TestimonialSection />

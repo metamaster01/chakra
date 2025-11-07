@@ -8,5 +8,5 @@ export function serverSupabase() {
 }
 
 export function publicImageUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-images/${path}`;
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/blog-image/${path}`;
 }
