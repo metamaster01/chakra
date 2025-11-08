@@ -13,7 +13,7 @@ export function VideoSection() {
       videoRef.current.play().catch((err) => console.log("Video play error:", err))
     }
 
-    // ✅ Safe window check for Next.js 15 (Turbopack)
+    
     if (typeof window !== "undefined") {
       window.open("/videos/promo1.mp4", "_blank")
     }
@@ -21,7 +21,7 @@ export function VideoSection() {
 
   return (
     <section className="bg-white px-4 py-16">
-      {/* Header */}
+      
       <div className="max-w-6xl mx-auto text-center mb-12 opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]">
         <h2 className="font-serif text-3xl md:text-4xl mb-2 text-gray-900 tracking-wide">
           Experience Our World
@@ -51,10 +51,10 @@ export function VideoSection() {
           onClick={handlePlay}
         />
 
-        {/* Overlay tint on hover */}
+        
         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-3xl" />
 
-        {/* Play Button — bottom-right corner */}
+       
         <button
           className="absolute bottom-4 right-4 flex items-center gap-2 bg-purple-800 text-white px-4 py-2 rounded-full shadow-md hover:bg-purple-700 hover:scale-105 transition-all duration-300"
           onClick={handlePlay}
