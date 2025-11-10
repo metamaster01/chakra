@@ -1349,530 +1349,10 @@
 
 
 
-'use client'
-
-import React, { useEffect, useRef } from 'react'
-import Image from 'next/image'
-
-export default function ChakraHeroScroll() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const pinSectionRef = useRef<HTMLDivElement>(null)
-  const imageWrapperRef = useRef<HTMLDivElement>(null)
-  const chakraRef = useRef<HTMLDivElement>(null)
-  const phase1ContentRef = useRef<HTMLDivElement>(null)
-  const phase2ContentRef = useRef<HTMLDivElement>(null)
-  const phase3ContentRef = useRef<HTMLDivElement>(null)
-  const card1Ref = useRef<HTMLDivElement>(null)
-  const card2Ref = useRef<HTMLDivElement>(null)
-  const card3Ref = useRef<HTMLDivElement>(null)
-  const card4Ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    let gsap: any
-    let ScrollTrigger: any
-    let Lenis: any
-    let lenis: any
-    let ctx: any
-
-    const setup = async () => {
-      const g = await import('gsap')
-      const st = await import('gsap/ScrollTrigger')
-      gsap = g.gsap || g.default
-      ScrollTrigger = st.ScrollTrigger
-      gsap.registerPlugin(ScrollTrigger)
-
-      const lenisModule = await import('@studio-freight/lenis')
-      Lenis = lenisModule.default
-
-      lenis = new Lenis({
-        duration: 1.2,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-        smoothTouch: false,
-      })
-
-      function raf(time: number) {
-        lenis.raf(time)
-        requestAnimationFrame(raf)
-      }
-      requestAnimationFrame(raf)
-
-      lenis.on('scroll', ScrollTrigger.update)
-
-      ctx = gsap.context(() => {
-        // Continuous chakra rotation - smooth and mesmerizing
-        gsap.to(chakraRef.current, {
-          rotation: 360,
-          duration: 20,
-          ease: 'none',
-          repeat: -1,
-        })
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: pinSectionRef.current,
-            start: 'top top',
-            end: '+=4000',
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-            onUpdate: (self: any) => {
-              // Update phase dots dynamically
-              const dots = document.querySelectorAll('[data-phase]')
-              const progress = self.progress
-              
-              if (progress < 0.33) {
-                // Phase 1
-                dots.forEach((dot, i) => {
-                  if (i === 0) {
-                    dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.remove('!bg-white/30')
-                  } else {
-                    dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.add('!bg-white/30')
-                  }
-                })
-              } else if (progress < 0.66) {
-                // Phase 2
-                dots.forEach((dot, i) => {
-                  if (i === 1) {
-                    dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.remove('!bg-white/30')
-                  } else {
-                    dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.add('!bg-white/30')
-                  }
-                })
-              } else {
-                // Phase 3
-                dots.forEach((dot, i) => {
-                  if (i === 2) {
-                    dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.remove('!bg-white/30')
-                  } else {
-                    dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
-                    dot.classList.add('!bg-white/30')
-                  }
-                })
-              }
-              
-              // Hide dots after section ends
-              const dotsContainer = document.querySelector('[data-phase-container]')
-              if (dotsContainer) {
-                if (progress >= 0.98) {
-                  gsap.to(dotsContainer, { autoAlpha: 0, duration: 0.3 })
-                } else {
-                  gsap.to(dotsContainer, { autoAlpha: 1, duration: 0.3 })
-                }
-              }
-            },
-          },
-        })
-
-        // Initial states - everything hidden except phase 1
-        gsap.set(phase2ContentRef.current, { autoAlpha: 0, x: 60 })
-        gsap.set(phase3ContentRef.current, { autoAlpha: 0, y: -30 })
-        
-        // Set cards at their final positions from the start
-        gsap.set(card1Ref.current, { autoAlpha: 0, scale: 1, x: -580, y: -240 })
-        gsap.set(card2Ref.current, { autoAlpha: 0, scale: 1, x: 240, y: -240 })
-        gsap.set(card3Ref.current, { autoAlpha: 0, scale: 1, x: -580, y: 280 })
-        gsap.set(card4Ref.current, { autoAlpha: 0, scale: 1, x: 240, y: 280 })
-
-        // =======================================
-        // PHASE 1 -> PHASE 2 TRANSITION
-        // =======================================
-        // Image moves left and maintains original size
-        tl.to(
-          imageWrapperRef.current,
-          {
-            x: '-48vw',
-            y: 0,
-            scale: 1,
-            duration: 1.2,
-            ease: 'power2.inOut',
-          },
-          0
-        )
-          .to(
-            phase1ContentRef.current,
-            { autoAlpha: 0, x: -60, duration: 0.5, ease: 'power2.out' },
-            0.15
-          )
-          .to(
-            phase2ContentRef.current,
-            { autoAlpha: 1, x: 0, duration: 0.75, ease: 'power2.out' },
-            0.6
-          )
-
-        // =======================================
-        // PHASE 2 -> PHASE 3 TRANSITION
-        // =======================================
-        // Image moves from LEFT to CENTER-BOTTOM smoothly
-        tl.to(imageWrapperRef.current, {
-          x: '-26vw',           // Center horizontally
-          y: '12vh',          // Position in lower center area
-          scale: 0.68,        // Slightly smaller for phase 3
-          duration: 1.2,
-          ease: 'power2.inOut',
-        })
-          .to(
-            phase2ContentRef.current,
-            { autoAlpha: 0, x: 60, duration: 0.5, ease: 'power2.out' },
-            '<'
-          )
-          .to(
-            phase3ContentRef.current,
-            { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.out' },
-            '<-0.3'
-          )
-
-        // =======================================
-        // PHASE 3: CARDS FADE IN AT POSITIONS (NO EMERGE/FLOAT)
-        // =======================================
-        // Cards fade in directly at their corner positions
-        tl.to(
-          [card1Ref.current, card2Ref.current, card3Ref.current, card4Ref.current],
-          { 
-            autoAlpha: 1, 
-            scale: 1, 
-            duration: 0.8, 
-            stagger: 0.12, 
-            ease: 'power2.out' 
-          },
-          '>'
-        )
-
-        // Floating animation for cards - subtle and elegant
-        gsap.to(card1Ref.current, { 
-          y: '-90', 
-
-          duration: 2.5, 
-          yoyo: true, 
-          repeat: -1, 
-          ease: 'sine.inOut',
-          delay: 0.2
-        })
-        gsap.to(card2Ref.current, { 
-          y: '-90', 
-          duration: 2.5, 
-          yoyo: true, 
-          // x:'200',
-          repeat: -1, 
-          ease: 'sine.inOut',
-          delay: 0.4 
-        })
-        gsap.to(card3Ref.current, { 
-          y: '150', 
-          duration: 2.5, 
-          yoyo: true, 
-          repeat: -1, 
-          ease: 'sine.inOut',
-          delay: 0.6 
-        })
-        gsap.to(card4Ref.current, { 
-          y: '130', 
-          // x:'200',
-          duration: 2.5, 
-          yoyo: true, 
-          repeat: -1, 
-          ease: 'sine.inOut',
-          delay: 0.8 
-        })
-      }, containerRef)
-    }
-
-    setup()
-
-    return () => {
-      ctx?.revert()
-      lenis?.destroy()
-    }
-  }, [])
-
-  return (
-    <div ref={containerRef} className="relative">
-      {/* Phase Indicator - 3 Elegant Dots */}
-      <div 
-        data-phase-container
-        className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-5"
-      >
-        <div 
-          data-phase="1" 
-          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
-        />
-        <div 
-          data-phase="2" 
-          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
-        />
-        <div 
-          data-phase="3" 
-          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
-        />
-      </div>
-
-      {/* Pinned Purple Section */}
-      <section
-        ref={pinSectionRef}
-        className="relative min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 overflow-hidden"
-      >
-        <div className="relative h-screen flex items-center justify-center px-6 lg:px-12 max-w-7xl mx-auto">
-
-          {/* =======================================
-              PHASE 1 — LEFT CONTENT
-          ======================================= */}
-          <div
-            ref={phase1ContentRef}
-            className="absolute left-6 lg:left-16 top-1/2 -translate-y-1/2 max-w-lg text-white z-20"
-          >
-            <h1 className="text-5xl lg:text-7xl font-bold leading-tight mb-6 font-serif bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
-              HEAL. ALIGN.
-              <br />
-              AWAKEN.
-            </h1>
-            <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
-              Your sanctuary for peace & holistic healing.
-            </p>
-            <button className="px-8 py-4 bg-gradient-to-r from-amber-200 to-amber-300 text-purple-900 font-semibold rounded-full hover:from-amber-300 hover:to-amber-400 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-amber-300/30 transform hover:scale-105">
-              Start your journey →
-            </button>
-            <div className="mt-12 space-y-3">
-              <div className="text-2xl font-bold bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-                100k Happy Customers
-              </div>
-              <p className="text-white/80 leading-relaxed max-w-md text-base">
-                Chakra healing restores harmony, clarity, and emotional strength.
-              </p>
-            </div>
-          </div>
-
-          {/* =======================================
-              PHASE 2 — RIGHT CONTENT
-          ======================================= */}
-          <div
-            ref={phase2ContentRef}
-            className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 max-w-xl text-white z-20"
-          >
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 font-serif leading-tight bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
-              Your Healing Journey
-            </h2>
-            <p className="text-xl text-white/90 mb-8 leading-relaxed">
-              Chakra means 'wheel of energy.' Guiding balance within mind, body, and spirit.
-            </p>
-            <div className="space-y-5 text-lg">
-              <div className="flex items-start gap-4 group">
-                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
-                <p className="text-white/90">Restore harmony and inner peace</p>
-              </div>
-              <div className="flex items-start gap-4 group">
-                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
-                <p className="text-white/90">Release stress and negative energy</p>
-              </div>
-              <div className="flex items-start gap-4 group">
-                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
-                <p className="text-white/90">Awaken your true potential</p>
-              </div>
-            </div>
-          </div>
-
-          {/* =======================================
-              PHASE 3 — TOP CENTER CONTENT
-          ======================================= */}
-          <div
-            ref={phase3ContentRef}
-            className="absolute top-24 lg:top-28 left-1/2 -translate-x-1/2 text-center text-white z-20 max-w-6xl px-6"
-          >
-            <h2 className="text-3xl lg:text-5xl xl:text-6xl font-bold leading-none tracking-tight mb-3 font-serif bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-transparent whitespace-nowrap">
-              HEAL. ALIGN. AWAKEN.
-            </h2>
-            <p className="text-base lg:text-xl text-white/90 mb-5">
-              Your Sanctuary For Peace & Holistic Healing
-            </p>
-            <button className="px-10 py-3 bg-gradient-to-r from-white to-amber-100 text-purple-900 font-bold rounded-full hover:from-amber-200 hover:to-amber-300 transition-all duration-300 shadow-2xl hover:shadow-amber-300/40 transform hover:scale-105">
-              Start your journey →
-            </button>
-          </div>
-
-          {/* =======================================
-              IMAGE + CHAKRA (Dynamic Positioning)
-          ======================================= */}
-          
-          <div
-            ref={imageWrapperRef}
-            className="absolute right-0 lg:right-10 top-1/2   -translate-y-1/2 w-[360px] h-[450px] lg:w-[400px] lg:h-[500px] z-10"
-          >
-            {/* Rotating Chakra Background */}
-            <div ref={chakraRef} className="absolute inset-0 flex items-center justify-center -z-10">
-              <Image
-                src="/chakra.png"
-                alt="Chakra"
-                width={750}
-                height={750}
-                className="w-full h-full object-contain opacity-80"
-                priority
-              />
-            </div>
-            {/* Meditation Girl Image */}
-            <div className="relative w-full h-full">
-              <Image 
-                src="/hero-img.png" 
-                alt="Meditation" 
-                fill 
-                className="object-contain drop-shadow-2xl" 
-                priority 
-              />
-            </div>
-          </div>
-
-          {/* =======================================
-              PHASE 3 CARDS - EMERGE FROM CENTER
-          ======================================= */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-5">
-            {/* Card 1 - Top Left */}
-            <div
-              ref={card1Ref}
-              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
-            >
-              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-                What Is Chakra?
-              </h3>
-              <p className="text-sm text-purple-100 leading-relaxed">
-                Chakra means 'wheel of energy,' guiding balance within mind, body, and spirit.
-              </p>
-            </div>
-
-            {/* Card 2 - Top Right */}
-            <div
-              ref={card2Ref}
-              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
-            >
-              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-                Why Chakra Healing?
-              </h3>
-              <p className="text-sm text-purple-100 leading-relaxed">
-                When chakras are aligned, stress fades and inner calm awakens.
-              </p>
-            </div>
-
-            {/* Card 3 - Bottom Left */}
-            <div
-              ref={card3Ref}
-              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
-            >
-              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-                Your Healing Journey
-              </h3>
-              <p className="text-sm text-purple-100 leading-relaxed">
-                Chakra healing restores harmony, clarity, and emotional strength.
-              </p>
-            </div>
-
-            {/* Card 4 - Bottom Right */}
-            <div
-              ref={card4Ref}
-              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
-            >
-              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-                The Power Of Balance
-              </h3>
-              <p className="text-sm text-purple-100 leading-relaxed">
-                Each chakra carries wisdom — from stability and love to awareness and peace.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-
-
-
-
-
-
-
-
-
-
-
-//exepriment for mobile view
-
-
-
-
-
-
 // 'use client'
 
 // import React, { useEffect, useRef } from 'react'
 // import Image from 'next/image'
-
-// // ✅ MOBILE VERSION (Simplified, no GSAP)
-// function MobileHero() {
-//   return (
-//     <section className="block lg:hidden min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex flex-col items-center justify-center text-center text-white px-6 py-12">
-//       <div className="relative w-64 h-72 mb-8">
-//         <div className="absolute inset-0 flex items-center justify-center">
-//           <Image
-//             src="/chakra.png"
-//             alt="Chakra"
-//             width={400}
-//             height={400}
-//             className="w-full h-full object-contain opacity-70 animate-spin-slow"
-//           />
-//         </div>
-//         <div className="relative w-full h-full">
-//           <Image
-//             src="/hero-img.png"
-//             alt="Meditation"
-//             fill
-//             className="object-contain drop-shadow-2xl"
-//           />
-//         </div>
-//       </div>
-
-//       <h1 className="text-4xl font-bold mb-4 font-serif bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
-//         HEAL. ALIGN. AWAKEN.
-//       </h1>
-//       <p className="text-lg text-white/90 mb-6 max-w-md">
-//         Your sanctuary for peace & holistic healing.
-//       </p>
-//       <button className="px-8 py-3 bg-gradient-to-r from-amber-200 to-amber-300 text-purple-900 font-semibold rounded-full hover:from-amber-300 hover:to-amber-400 transition-all duration-300 shadow-lg hover:scale-105">
-//         Start your journey →
-//       </button>
-
-//       <div className="mt-8 space-y-2">
-//         <h2 className="text-2xl font-semibold bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
-//           Your Healing Journey
-//         </h2>
-//         <p className="text-white/80 text-base max-w-sm mx-auto">
-//           Chakra healing restores harmony, clarity, and emotional strength.
-//         </p>
-//       </div>
-
-//       <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-md mx-auto">
-//         {[
-//           { title: 'What Is Chakra?', desc: "Chakra means 'wheel of energy,' guiding balance within mind, body, and spirit." },
-//           { title: 'Why Chakra Healing?', desc: "When chakras are aligned, stress fades and inner calm awakens." },
-//           { title: 'Your Healing Journey', desc: "Chakra healing restores harmony, clarity, and emotional strength." },
-//           { title: 'The Power Of Balance', desc: "Each chakra carries wisdom — from stability and love to awareness and peace." },
-//         ].map((card, i) => (
-//           <div
-//             key={i}
-//             className="p-5 bg-gradient-to-br from-purple-800/90 to-purple-900/95 rounded-2xl shadow-xl border border-purple-600/40 hover:border-amber-300/50 transition-all duration-300"
-//           >
-//             <h3 className="text-lg font-bold bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent mb-2">
-//               {card.title}
-//             </h3>
-//             <p className="text-sm text-purple-100 leading-relaxed">{card.desc}</p>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   )
-// }
 
 // export default function ChakraHeroScroll() {
 //   const containerRef = useRef<HTMLDivElement>(null)
@@ -1888,7 +1368,6 @@ export default function ChakraHeroScroll() {
 //   const card4Ref = useRef<HTMLDivElement>(null)
 
 //   useEffect(() => {
-//     if (typeof window !== 'undefined' && window.innerWidth < 1024) return
 //     let gsap: any
 //     let ScrollTrigger: any
 //     let Lenis: any
@@ -1917,9 +1396,11 @@ export default function ChakraHeroScroll() {
 //         requestAnimationFrame(raf)
 //       }
 //       requestAnimationFrame(raf)
+
 //       lenis.on('scroll', ScrollTrigger.update)
 
 //       ctx = gsap.context(() => {
+//         // Continuous chakra rotation - smooth and mesmerizing
 //         gsap.to(chakraRef.current, {
 //           rotation: 360,
 //           duration: 20,
@@ -1934,50 +1415,175 @@ export default function ChakraHeroScroll() {
 //             end: '+=4000',
 //             scrub: 1,
 //             pin: true,
+//             anticipatePin: 1,
+//             onUpdate: (self: any) => {
+//               // Update phase dots dynamically
+//               const dots = document.querySelectorAll('[data-phase]')
+//               const progress = self.progress
+              
+//               if (progress < 0.33) {
+//                 // Phase 1
+//                 dots.forEach((dot, i) => {
+//                   if (i === 0) {
+//                     dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.remove('!bg-white/30')
+//                   } else {
+//                     dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.add('!bg-white/30')
+//                   }
+//                 })
+//               } else if (progress < 0.66) {
+//                 // Phase 2
+//                 dots.forEach((dot, i) => {
+//                   if (i === 1) {
+//                     dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.remove('!bg-white/30')
+//                   } else {
+//                     dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.add('!bg-white/30')
+//                   }
+//                 })
+//               } else {
+//                 // Phase 3
+//                 dots.forEach((dot, i) => {
+//                   if (i === 2) {
+//                     dot.classList.add('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.remove('!bg-white/30')
+//                   } else {
+//                     dot.classList.remove('!bg-amber-300', '!w-4', '!h-4', '!shadow-lg', '!shadow-amber-300/50')
+//                     dot.classList.add('!bg-white/30')
+//                   }
+//                 })
+//               }
+              
+//               // Hide dots after section ends
+//               const dotsContainer = document.querySelector('[data-phase-container]')
+//               if (dotsContainer) {
+//                 if (progress >= 0.98) {
+//                   gsap.to(dotsContainer, { autoAlpha: 0, duration: 0.3 })
+//                 } else {
+//                   gsap.to(dotsContainer, { autoAlpha: 1, duration: 0.3 })
+//                 }
+//               }
+//             },
 //           },
 //         })
 
+//         // Initial states - everything hidden except phase 1
 //         gsap.set(phase2ContentRef.current, { autoAlpha: 0, x: 60 })
 //         gsap.set(phase3ContentRef.current, { autoAlpha: 0, y: -30 })
-//         gsap.set(card1Ref.current, { autoAlpha: 0, x: -580, y: -240 })
-//         gsap.set(card2Ref.current, { autoAlpha: 0, x: 240, y: -240 })
-//         gsap.set(card3Ref.current, { autoAlpha: 0, x: -580, y: 280 })
-//         gsap.set(card4Ref.current, { autoAlpha: 0, x: 240, y: 280 })
+        
+//         // Set cards at their final positions from the start
+//         gsap.set(card1Ref.current, { autoAlpha: 0, scale: 1, x: -580, y: -240 })
+//         gsap.set(card2Ref.current, { autoAlpha: 0, scale: 1, x: 240, y: -240 })
+//         gsap.set(card3Ref.current, { autoAlpha: 0, scale: 1, x: -580, y: 280 })
+//         gsap.set(card4Ref.current, { autoAlpha: 0, scale: 1, x: 240, y: 280 })
 
+//         // =======================================
+//         // PHASE 1 -> PHASE 2 TRANSITION
+//         // =======================================
+//         // Image moves left and maintains original size
+//         tl.to(
+//           imageWrapperRef.current,
+//           {
+//             x: '-48vw',
+//             y: 0,
+//             scale: 1,
+//             duration: 1.2,
+//             ease: 'power2.inOut',
+//           },
+//           0
+//         )
+//           .to(
+//             phase1ContentRef.current,
+//             { autoAlpha: 0, x: -60, duration: 0.5, ease: 'power2.out' },
+//             0.15
+//           )
+//           .to(
+//             phase2ContentRef.current,
+//             { autoAlpha: 1, x: 0, duration: 0.75, ease: 'power2.out' },
+//             0.6
+//           )
+
+//         // =======================================
+//         // PHASE 2 -> PHASE 3 TRANSITION
+//         // =======================================
+//         // Image moves from LEFT to CENTER-BOTTOM smoothly
 //         tl.to(imageWrapperRef.current, {
-//           x: '-48vw',
-//           y: 0,
-//           scale: 1,
+//           x: '-26vw',           // Center horizontally
+//           y: '12vh',          // Position in lower center area
+//           scale: 0.68,        // Slightly smaller for phase 3
 //           duration: 1.2,
 //           ease: 'power2.inOut',
 //         })
-//           .to(phase1ContentRef.current, { autoAlpha: 0, x: -60, duration: 0.5 }, 0.15)
-//           .to(phase2ContentRef.current, { autoAlpha: 1, x: 0, duration: 0.75 }, 0.6)
+//           .to(
+//             phase2ContentRef.current,
+//             { autoAlpha: 0, x: 60, duration: 0.5, ease: 'power2.out' },
+//             '<'
+//           )
+//           .to(
+//             phase3ContentRef.current,
+//             { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+//             '<-0.3'
+//           )
 
-//         tl.to(imageWrapperRef.current, {
-//           x: '-26vw',
-//           y: '12vh',
-//           scale: 0.68,
-//           duration: 1.2,
-//           ease: 'power2.inOut',
-//         })
-//           .to(phase2ContentRef.current, { autoAlpha: 0, x: 60, duration: 0.5 }, '<')
-//           .to(phase3ContentRef.current, { autoAlpha: 1, y: 0, duration: 0.7 }, '<-0.3')
-
+//         // =======================================
+//         // PHASE 3: CARDS FADE IN AT POSITIONS (NO EMERGE/FLOAT)
+//         // =======================================
+//         // Cards fade in directly at their corner positions
 //         tl.to(
 //           [card1Ref.current, card2Ref.current, card3Ref.current, card4Ref.current],
-//           { autoAlpha: 1, scale: 1, duration: 0.8, stagger: 0.12 },
+//           { 
+//             autoAlpha: 1, 
+//             scale: 1, 
+//             duration: 0.8, 
+//             stagger: 0.12, 
+//             ease: 'power2.out' 
+//           },
 //           '>'
 //         )
 
-//         gsap.to(card1Ref.current, { y: '-90', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-//         gsap.to(card2Ref.current, { y: '-90', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-//         gsap.to(card3Ref.current, { y: '150', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-//         gsap.to(card4Ref.current, { y: '130', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+//         // Floating animation for cards - subtle and elegant
+//         gsap.to(card1Ref.current, { 
+//           y: '-90', 
+
+//           duration: 2.5, 
+//           yoyo: true, 
+//           repeat: -1, 
+//           ease: 'sine.inOut',
+//           delay: 0.2
+//         })
+//         gsap.to(card2Ref.current, { 
+//           y: '-90', 
+//           duration: 2.5, 
+//           yoyo: true, 
+//           // x:'200',
+//           repeat: -1, 
+//           ease: 'sine.inOut',
+//           delay: 0.4 
+//         })
+//         gsap.to(card3Ref.current, { 
+//           y: '150', 
+//           duration: 2.5, 
+//           yoyo: true, 
+//           repeat: -1, 
+//           ease: 'sine.inOut',
+//           delay: 0.6 
+//         })
+//         gsap.to(card4Ref.current, { 
+//           y: '130', 
+//           // x:'200',
+//           duration: 2.5, 
+//           yoyo: true, 
+//           repeat: -1, 
+//           ease: 'sine.inOut',
+//           delay: 0.8 
+//         })
 //       }, containerRef)
 //     }
 
 //     setup()
+
 //     return () => {
 //       ctx?.revert()
 //       lenis?.destroy()
@@ -1985,15 +1591,8 @@ export default function ChakraHeroScroll() {
 //   }, [])
 
 //   return (
-//     <>
-//       {/* ✅ Desktop Animation Section */}
-//       <div ref={containerRef} className="hidden lg:block relative">
-//         <section
-//           ref={pinSectionRef}
-//           className="relative min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 overflow-hidden"
-//         >
-//           {/* ... your animated section content remains unchanged ... */}
-//            {/* Phase Indicator - 3 Elegant Dots */}
+//     <div ref={containerRef} className="relative  ">
+//       {/* Phase Indicator - 3 Elegant Dots */}
 //       <div 
 //         data-phase-container
 //         className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-5"
@@ -2010,11 +1609,14 @@ export default function ChakraHeroScroll() {
 //           data-phase="3" 
 //           className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
 //         />
-//     </div>
+//       </div>
 
 //       {/* Pinned Purple Section */}
-      
-//         <div className="relative h-screen flex items-center justify-center px-6 lg:px-12 max-w-7xl mx-auto"/>
+//       <section
+//         ref={pinSectionRef}
+//         className="relative min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 overflow-hidden"
+//       >
+//         <div className="relative h-screen flex items-center justify-center px-6 lg:px-12 max-w-7xl mx-auto">
 
 //           {/* =======================================
 //               PHASE 1 — LEFT CONTENT
@@ -2178,13 +1780,475 @@ export default function ChakraHeroScroll() {
 //               </p>
 //             </div>
 //           </div>
-//         </section>
-//       </div>
-
-//       {/* ✅ Mobile Hero (Only Mobile Visible) */}
-//       <div className="block lg:hidden">
-//         <MobileHero />
-//       </div>
-//     </>
+//         </div>
+//       </section>
+//     </div>
 //   )
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+//exepriment for mobile view ,one sectior for mobile then desktop hidden,when desktop view then mobile section hidden hai
+
+
+'use client'
+
+import React, { useEffect, useRef } from 'react'
+import Image from 'next/image'
+
+import { motion } from 'framer-motion'
+
+// ✅ MOBILE VERSION (with scroll animations)
+
+
+export function MobileHero() {
+  return (
+    <section className="block lg:hidden relative min-h-[240vh] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex flex-col items-center text-center text-white px-6 py-12 overflow-hidden">
+      {/*  Chakra continuously rotating behind girl */}
+      <motion.div
+        className="absolute top-[4%] left-1/2 -translate-x-1/2 flex items-center justify-center w-[380px] h-[380px] z-0"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+      >
+        <Image
+          src="/chakra.png"
+          alt="Chakra"
+          width={600}
+          height={600}
+          className="object-contain opacity-70 scale-110"
+          priority
+        />
+      </motion.div>
+
+      
+      <motion.div
+        className="relative z-10 w-64 h-72 mb-8 mt-12"
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ amount: 0.5 }}
+        transition={{ duration: 0.9, ease: 'easeOut' }}
+      >
+        <Image
+          src="/hero-img.png"
+          alt="Meditation"
+          fill
+          className="object-contain drop-shadow-2xl"
+          priority
+        />
+      </motion.div>
+
+     
+      <motion.div
+        className="z-10 space-y-2 max-w-md"
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ amount: 0.4 }}
+        transition={{ duration: 0.7 }}
+      >
+        <h1 className="text-4xl font-bold mb-2 font-serif bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
+          HEAL. ALIGN. AWAKEN.
+        </h1>
+        <p className="text-lg text-white/90 mb-6">
+          Your sanctuary for peace & holistic healing.
+        </p>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.05 }}
+          className="px-8 py-3 bg-gradient-to-r from-amber-200 to-amber-300 text-purple-900 font-semibold rounded-full hover:from-amber-300 hover:to-amber-400 transition-all duration-300 shadow-lg hover:scale-105"
+        >
+          Start your journey →
+        </motion.button>
+      </motion.div>
+
+       
+      <motion.div
+        className="z-10 mt-20 space-y-5 max-w-md text-left"
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.3 }}
+        transition={{ duration: 0.9 }}
+      >
+        <h2 className="text-3xl font-semibold text-center bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+          Your Healing Journey
+        </h2>
+
+        <p className="text-white/85 text-base text-center">
+          Chakra means 'wheel of energy.' Guiding balance within mind, body, and spirit.
+        </p>
+
+        <div className="mt-6 space-y-4 text-lg text-white/90">
+          {[
+            'Restore harmony and inner peace',
+            'Release stress and negative energy',
+            'Awaken your true potential',
+          ].map((text, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-amber-300 text-2xl font-semibold">✓</span>
+              <p>{text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+   
+      <div className="z-10 mt-14 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-md mx-auto">
+        {[
+          { title: 'What Is Chakra?', desc: "Chakra means 'wheel of energy,' guiding balance within mind, body, and spirit." },
+          { title: 'Why Chakra Healing?', desc: "When chakras are aligned, stress fades and inner calm awakens." },
+          { title: 'Your Healing Journey', desc: "Chakra healing restores harmony, clarity, and emotional strength." },
+          { title: 'The Power Of Balance', desc: "Each chakra carries wisdom — from stability and love to awareness and peace." },
+        ].map((card, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: i * 0.1 }}
+            whileHover={{ scale: 1.05 }}
+            className="p-5 bg-gradient-to-br from-purple-800/90 to-purple-900/95 rounded-2xl shadow-xl border border-purple-600/40 hover:border-amber-300/50 transition-all duration-300"
+          >
+            <h3 className="text-lg font-bold bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent mb-2">
+              {card.title}
+            </h3>
+            <p className="text-sm text-purple-100 leading-relaxed">{card.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+
+     
+    </section>
+  )
+}
+
+
+
+export default function ChakraHeroScroll() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const pinSectionRef = useRef<HTMLDivElement>(null)
+  const imageWrapperRef = useRef<HTMLDivElement>(null)
+  const chakraRef = useRef<HTMLDivElement>(null)
+  const phase1ContentRef = useRef<HTMLDivElement>(null)
+  const phase2ContentRef = useRef<HTMLDivElement>(null)
+  const phase3ContentRef = useRef<HTMLDivElement>(null)
+  const card1Ref = useRef<HTMLDivElement>(null)
+  const card2Ref = useRef<HTMLDivElement>(null)
+  const card3Ref = useRef<HTMLDivElement>(null)
+  const card4Ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return
+    let gsap: any
+    let ScrollTrigger: any
+    let Lenis: any
+    let lenis: any
+    let ctx: any
+
+    const setup = async () => {
+      const g = await import('gsap')
+      const st = await import('gsap/ScrollTrigger')
+      gsap = g.gsap || g.default
+      ScrollTrigger = st.ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger)
+
+      const lenisModule = await import('@studio-freight/lenis')
+      Lenis = lenisModule.default
+
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        smoothTouch: false,
+      })
+
+      function raf(time: number) {
+        lenis.raf(time)
+        requestAnimationFrame(raf)
+      }
+      requestAnimationFrame(raf)
+      lenis.on('scroll', ScrollTrigger.update)
+
+      ctx = gsap.context(() => {
+        gsap.to(chakraRef.current, {
+          rotation: 360,
+          duration: 20,
+          ease: 'none',
+          repeat: -1,
+        })
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pinSectionRef.current,
+            start: 'top top',
+            end: '+=4000',
+            scrub: 1,
+            pin: true,
+          },
+        })
+
+        gsap.set(phase2ContentRef.current, { autoAlpha: 0, x: 60 })
+        gsap.set(phase3ContentRef.current, { autoAlpha: 0, y: -30 })
+        gsap.set(card1Ref.current, { autoAlpha: 0, x: -580, y: -240 })
+        gsap.set(card2Ref.current, { autoAlpha: 0, x: 240, y: -240 })
+        gsap.set(card3Ref.current, { autoAlpha: 0, x: -580, y: 280 })
+        gsap.set(card4Ref.current, { autoAlpha: 0, x: 240, y: 280 })
+
+        tl.to(imageWrapperRef.current, {
+          x: '-48vw',
+          y: 0,
+          scale: 1,
+          duration: 1.2,
+          ease: 'power2.inOut',
+        })
+          .to(phase1ContentRef.current, { autoAlpha: 0, x: -60, duration: 0.5 }, 0.15)
+          .to(phase2ContentRef.current, { autoAlpha: 1, x: 0, duration: 0.75 }, 0.6)
+
+        tl.to(imageWrapperRef.current, {
+          x: '-26vw',
+          y: '12vh',
+          scale: 0.68,
+          duration: 1.2,
+          ease: 'power2.inOut',
+        })
+          .to(phase2ContentRef.current, { autoAlpha: 0, x: 60, duration: 0.5 }, '<')
+          .to(phase3ContentRef.current, { autoAlpha: 1, y: 0, duration: 0.7 }, '<-0.3')
+
+        tl.to(
+          [card1Ref.current, card2Ref.current, card3Ref.current, card4Ref.current],
+          { autoAlpha: 1, scale: 1, duration: 0.8, stagger: 0.12 },
+          '>'
+        )
+
+        gsap.to(card1Ref.current, { y: '-90', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+        gsap.to(card2Ref.current, { y: '-90', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+        gsap.to(card3Ref.current, { y: '150', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+        gsap.to(card4Ref.current, { y: '130', duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+      }, containerRef)
+    }
+
+    setup()
+    return () => {
+      ctx?.revert()
+      lenis?.destroy()
+    }
+  }, [])
+
+  return (
+    <>
+      {/* ✅ Desktop Animation Section */}
+      <div ref={containerRef} className="hidden lg:block relative">
+        <section
+          ref={pinSectionRef}
+          className="relative min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 overflow-hidden "
+        >
+          {/* ... your animated section content remains unchanged ... */}
+           {/* Phase Indicator - 3 Elegant Dots */}
+      <div 
+        data-phase-container
+        className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-5"
+      >
+        <div 
+          data-phase="1" 
+          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
+        />
+        <div 
+          data-phase="2" 
+          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
+        />
+        <div 
+          data-phase="3" 
+          className="w-3 h-3 rounded-full bg-white/30 transition-all duration-500 ease-out"
+        />
+    </div>
+
+      {/* Pinned Purple Section */}
+      
+        <div className="relative h-screen flex items-center justify-center px-6 lg:px-12 max-w-7xl mx-auto"/>
+
+          {/* =======================================
+              PHASE 1 — LEFT CONTENT
+          ======================================= */}
+          <div
+            ref={phase1ContentRef}
+            className="absolute left-8 lg:left-46 top-1/2 -translate-y-1/2 max-w-lg text-white z-20"
+          >
+            <h1 className="text-5xl lg:text-7xl font-bold leading-tight mb-6 font-serif bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
+              HEAL. ALIGN.
+              <br />
+              AWAKEN.
+            </h1>
+            <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
+              Your sanctuary for peace & holistic healing.
+            </p>
+            <button className="px-8 py-4 bg-gradient-to-r from-amber-200 to-amber-300 text-purple-900 font-semibold rounded-full hover:from-amber-300 hover:to-amber-400 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-amber-300/30 transform hover:scale-105">
+              Start your journey →
+            </button>
+            <div className="mt-12 space-y-3">
+              <div className="text-2xl font-bold bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+                100k Happy Customers
+              </div>
+              <p className="text-white/80 leading-relaxed max-w-md text-base">
+                Chakra healing restores harmony, clarity, and emotional strength.
+              </p>
+            </div>
+          </div>
+
+          {/* =======================================
+              PHASE 2 — RIGHT CONTENT
+          ======================================= */}
+          <div
+            ref={phase2ContentRef}
+            className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 max-w-xl text-white z-20"
+          >
+            <h2 className="text-5xl lg:text-6xl font-bold mb-6 font-serif leading-tight bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
+              Your Healing Journey
+            </h2>
+            <p className="text-xl text-white/90 mb-8 leading-relaxed">
+              Chakra means 'wheel of energy.' Guiding balance within mind, body, and spirit.
+            </p>
+            <div className="space-y-5 text-lg">
+              <div className="flex items-start gap-4 group">
+                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
+                <p className="text-white/90">Restore harmony and inner peace</p>
+              </div>
+              <div className="flex items-start gap-4 group">
+                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
+                <p className="text-white/90">Release stress and negative energy</p>
+              </div>
+              <div className="flex items-start gap-4 group">
+                <span className="text-amber-300 text-2xl transform group-hover:scale-110 transition-transform duration-300">✓</span>
+                <p className="text-white/90">Awaken your true potential</p>
+              </div>
+            </div>
+          </div>
+
+          {/* =======================================
+              PHASE 3 — TOP CENTER CONTENT
+          ======================================= */}
+          <div
+            ref={phase3ContentRef}
+            className="absolute top-24 lg:top-28 left-1/2 -translate-x-1/2 text-center text-white z-20 max-w-6xl px-6"
+          >
+            <h2 className="text-3xl lg:text-5xl xl:text-6xl font-bold leading-none tracking-tight mb-3 font-serif bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-transparent whitespace-nowrap">
+              HEAL. ALIGN. AWAKEN.
+            </h2>
+            <p className="text-base lg:text-xl text-white/90 mb-5">
+              Your Sanctuary For Peace & Holistic Healing
+            </p>
+            <button className="px-10 py-3 bg-gradient-to-r from-white to-amber-100 text-purple-900 font-bold rounded-full hover:from-amber-200 hover:to-amber-300 transition-all duration-300 shadow-2xl hover:shadow-amber-300/40 transform hover:scale-105">
+              Start your journey →
+            </button>
+          </div>
+
+          {/* =======================================
+              IMAGE + CHAKRA (Dynamic Positioning)
+          ======================================= */}
+          
+          <div
+            ref={imageWrapperRef}
+            className="absolute right-0 lg:right-40 top-1/2   -translate-y-1/2 w-[360px] h-[450px] lg:w-[400px] lg:h-[500px] z-10"
+          >
+            {/* Rotating Chakra Background */}
+            <div ref={chakraRef} className="absolute inset-0 flex items-center justify-center -z-10">
+              <Image
+                src="/chakra.png"
+                alt="Chakra"
+                width={750}
+                height={750}
+                className="w-full h-full object-contain opacity-80"
+                priority
+              />
+            </div>
+            {/* Meditation Girl Image */}
+            <div className="relative w-full h-full">
+              <Image 
+                src="/hero-img.png" 
+                alt="Meditation" 
+                fill 
+                className="object-contain drop-shadow-2xl" 
+                priority 
+              />
+            </div>
+          </div>
+
+          {/* =======================================
+              PHASE 3 CARDS - EMERGE FROM CENTER
+          ======================================= */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-5">
+            {/* Card 1 - Top Left */}
+            <div
+              ref={card1Ref}
+              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
+            >
+              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+                What Is Chakra?
+              </h3>
+              <p className="text-sm text-purple-100 leading-relaxed">
+                Chakra means 'wheel of energy,' guiding balance within mind, body, and spirit.
+              </p>
+            </div>
+
+            {/* Card 2 - Top Right */}
+            <div
+              ref={card2Ref}
+              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
+            >
+              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+                Why Chakra Healing?
+              </h3>
+              <p className="text-sm text-purple-100 leading-relaxed">
+                When chakras are aligned, stress fades and inner calm awakens.
+              </p>
+            </div>
+
+            {/* Card 3 - Bottom Left */}
+            <div
+              ref={card3Ref}
+              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
+            >
+              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+                Your Healing Journey
+              </h3>
+              <p className="text-sm text-purple-100 leading-relaxed">
+                Chakra healing restores harmony, clarity, and emotional strength.
+              </p>
+            </div>
+
+            {/* Card 4 - Bottom Right */}
+            <div
+              ref={card4Ref}
+              className="absolute w-72 p-6 bg-gradient-to-br from-purple-800/95 to-purple-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-600/40 hover:border-amber-300/60 hover:shadow-amber-300/20 transition-all duration-300 hover:scale-105"
+            >
+              <h3 className="text-lg font-bold text-white mb-3 bg-gradient-to-r from-amber-200 to-white bg-clip-text text-transparent">
+                The Power Of Balance
+              </h3>
+              <p className="text-sm text-purple-100 leading-relaxed">
+                Each chakra carries wisdom — from stability and love to awareness and peace.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ✅ Mobile Hero (Only Mobile Visible) */}
+       <div className="block lg:hidden">
+        <MobileHero />
+      </div>
+    </>
+  )
+}

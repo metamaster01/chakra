@@ -1,7 +1,6 @@
-// 'use client'
+'use client'
+import ChakraHeroScroll from './HeroScroll'
 
-// import ChakraHeroScroll from './HeroScroll'
-
-// export default function HeroScrollClient() {
-//   return <ChakraHeroScroll />
-// }
+export default function HeroScrollClient() {
+  return <ChakraHeroScroll />
+}

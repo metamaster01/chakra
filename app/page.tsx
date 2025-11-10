@@ -12,13 +12,14 @@ import FeaturedServices from "@/components/ServiceList"
 import { GallerySection } from "@/components/GallerySection"
 import { VideoSection } from "@/components/VideoSection"
 // ✅ Server Component
-// import HeroScrollClient from '@/components/HeroScrollClient'
+import HeroScrollClient from '@/components/HeroScrollClient'
+
 
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden">
-      <HeroScroll />
-       
+      {/* <HeroScroll /> */}
+      <HeroScrollClient />
       <AboutSection />
       <WhyChooseUsSection />
       <FeaturedProduct />
@@ -28,7 +29,8 @@ export default function Home() {
       <TestimonialSection />
       <CallToActionSection />
       <FooterSection />
-      {/* <HeroScrollClient /> */}
+      
+
     </main>
   )
 }
