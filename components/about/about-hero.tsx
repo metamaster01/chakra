@@ -2,13 +2,13 @@ import Image from "next/image";
 
 export default function AboutHero() {
   return (
-    <section className="relative overflow-hidden bg-[#3b255f] min-h-[600px]">
+    <section className="relative overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 min-h-[600px]">
       {/* Decorative Mandala - Left Side */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -left-12 top-1/2 bottom-0 -translate-y-1/2 z-10 hidden md:block"
       >
-        <div className="absolute w-[580px] h-[440px] top-0 my-auto">
+        <div className="absolute w-[580px] h-[440px] top-0 my-auto ">
           <Image
             src="/chakra-2.png"
             alt=""
@@ -21,30 +21,33 @@ export default function AboutHero() {
 
       {/* Main Content */}
       <div className="relative z-10 text-center px-4 py-24 md:py-32 mx-auto max-w-7xl">
-        <h1 className="text-purple-200 text-4xl md:text-5xl lg:text-6xl tracking-[0.1em] uppercase leading-tight font-serif font-bold ">
+        {/* <h1 className="text-amber-100 text-4xl md:text-5xl lg:text-6xl tracking-[0.1em] uppercase leading-tight font-serif font-bold drop-shadow-[0_2px_6px_rgba(255,255,255,0.2)]"> */}
+        <h1 className="text-purple-100 text-4xl md:text-5xl lg:text-6xl tracking-[0.1em] uppercase leading-tight font-serif font-bold ">
+
           ABOUT CHAKRA HEALING
           <br />
           CENTER
         </h1>
+        
       </div>
 
       {/* Wave Container */}
       <div className="absolute bottom-0 left-0 w-full z-20">
-        {/* Back Wave Layer (Lighter Purple) */}
+        {/* Back Wave Layer with light Purple Glow */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
           preserveAspectRatio="none"
-          className="absolute bottom-0 w-full h-[180px] md:h-[220px] opacity-50"
+          className="absolute bottom-0 w-full h-[180px] md:h-[220px] opacity-60"
         >
           <path
-            fill="#b8a8d1"
-            fillOpacity="0.6"
+            fill="#c9b3e8"
+            fillOpacity="0.7"
             d="M0,64L80,53.3C160,43,320,21,480,48C640,75,800,149,960,186.7C1120,224,1280,224,1360,224L1440,224L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"
           />
         </svg>
 
-        {/* Front Wave Layer (Cream/Beige) */}
+        {/* Front Wave Layer with Cream Base Transition */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
@@ -61,6 +64,7 @@ export default function AboutHero() {
     </section>
   );
 }
+
 
 // import Image from "next/image";
 

@@ -21,7 +21,7 @@ export function AboutSection() {
             </svg>
           </div>
 
-          <ScrollReveal className="relative z-10 text-center mb-8">
+          <ScrollReveal className="relative z-10 text-center mb-8 ">
             <p className="text-sm tracking-wide text-gray-600 mb-2">About Chakra Healing Center</p>
             <VariableProximityText
               as="h2"
