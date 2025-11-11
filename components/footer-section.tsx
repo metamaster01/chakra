@@ -238,14 +238,22 @@ export function FooterSection() {
                 </motion.div>
 
                 {/* Woman Image - Perfectly Centered */}
-                <div className="relative z-10 flex items-center justify-center">
+                {/* <div className="relative z-10 flex items-center justify-center">
                   <img
                     src="/footer-bg-2.png"
                     alt="Woman in meditation"
-                    className="w-60 h-auto lg:w-80 object-contain drop-shadow-2xl flex right-10"
+                    className="w-60 h-auto lg:w-80 object-contain drop-shadow-2xl flex right-10 "
 
                   />
-                </div>
+                </div> */}
+
+                <div className="relative z-10 flex items-center justify-center translate-x-6 lg:translate-x-10">
+  <img
+    src="/footer-bg-2.png"
+    alt="Woman in meditation"
+    className="w-60 h-auto lg:w-80 object-contain drop-shadow-2xl"
+  />
+</div>
               </motion.div>
             </div>
 
