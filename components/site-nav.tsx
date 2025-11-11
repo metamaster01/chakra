@@ -201,9 +201,14 @@ export function SiteNav() {
     <>
       <motion.header 
         className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+          // isScrolled 
+          //   ? "bg-[#3b255f]/95 backdrop-blur-md shadow-lg shadow-purple-900/20" 
+          //   : "bg-[#3b255f]"
+
           isScrolled 
-            ? "bg-[#3b255f]/95 backdrop-blur-md shadow-lg shadow-purple-900/20" 
-            : "bg-[#3b255f]"
+  ? "bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900/95 backdrop-blur-md shadow-lg shadow-purple-900/30"
+  : "bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900"
+
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -391,15 +396,19 @@ function RightDrawer({ open, onClose }: { open: boolean; onClose: () => void }) 
 
           {/* Drawer */}
           <motion.aside
-            className="fixed right-0 top-0 z-50 h-full w-[85vw] max-w-sm bg-gradient-to-b from-[#3b255f] to-[#2a1a4a] 
-                     text-white shadow-2xl overflow-y-auto"
+            // className="fixed right-0 top-0 z-50 h-full w-[85vw] max-w-sm bg-gradient-to-b from-[#3b255f] to-[#2a1a4a] 
+            //          text-white shadow-2xl overflow-y-auto"
+
+            className="fixed right-0 top-0 z-50 h-full w-[85vw] max-w-sm bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900
+                      text-white shadow-2xl overflow-y-auto"
+
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
           >
             {/* Header */}
-            <div className="relative flex items-center justify-between p-6 border-b border-white/10">
+            <div className="relative flex items-center justify-between p-6 border-b border-white/10 ">
               <motion.div 
                 className="flex items-center gap-3"
                 initial={{ opacity: 0, x: 20 }}
