@@ -1807,7 +1807,7 @@ import Image from 'next/image'
 
 import { motion } from 'framer-motion'
 
-// ✅ MOBILE VERSION (with scroll animations)
+// MOBILE VERSION (with scroll animations)
 
 
 export function MobileHero() {
@@ -2050,7 +2050,7 @@ export default function ChakraHeroScroll() {
 
   return (
     <>
-      {/* ✅ Desktop Animation Section */}
+      {/*  Desktop Animation Section */}
       <div ref={containerRef} className="hidden lg:block relative">
         <section
           ref={pinSectionRef}
@@ -2245,7 +2245,7 @@ export default function ChakraHeroScroll() {
         </section>
       </div>
 
-      {/* ✅ Mobile Hero (Only Mobile Visible) */}
+      {/*  Mobile Hero (Only Mobile Visible) */}
        <div className="block lg:hidden">
         <MobileHero />
       </div>
